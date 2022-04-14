@@ -1,0 +1,64 @@
+package org.renue;
+
+public class Main
+{
+    public static void main(String[] args)
+    {
+        LinesReader reader = null;
+        CsvParser parser;
+        ValueChecker stringSearch;
+        FilteredValues columnValues = new FilteredValues();
+        Timer timer = new Timer();
+
+        String filePath = "./src/main/resources/airports.csv";
+        char separator = ',';
+        int columnNumber = 14;
+        char mark = '\"';
+
+        int filterColumnIndex = 1;
+
+        int counter = 0;
+
+        try
+        {
+            reader = new LinesReader(filePath);
+            parser = new CsvParser(columnNumber, separator, mark);
+            stringSearch = new ValueChecker("Il", mark);
+            timer.StartTimer();
+            String line;
+            while ((line = reader.GetLine()) != null)
+            {
+                String columnValue = parser.GetColumnValue(line, filterColumnIndex);
+                if (stringSearch.IsRightValue(columnValue))
+                {
+                    columnValues.AddValue(columnValue, parser.GetLineInfo());
+                    counter++;
+                }
+            }
+            reader.Close();
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        //ValueSorter sorter = new ValueSorter(columnValues.GetKeys());
+        String[] keys = ValueSorter.sort(columnValues.GetKeys());
+        //String[] keys = columnValues.GetKeys();
+        timer.StopTimer();
+        for (Object key : keys)
+        {
+            //System.out.println(key);
+            String[] lineInfo = columnValues.GetLines(key.toString());
+            for (String info : lineInfo)
+            {
+                System.out.println(key + "," + info);
+            }
+
+        }
+
+        System.out.println("Number of lines found: " + counter);
+        System.out.println("Time: " + timer.GetTimerTime() + " ms");
+    }
+}
