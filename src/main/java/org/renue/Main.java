@@ -12,7 +12,7 @@ public class Main
         {
             YmlParser ymlParser = new YmlParser("./application.yml");
             int filteredColumn = 0;
-            String filePath = null;
+            String filePath;
 
             int argsLength = args.length;
             if(argsLength < 2)
@@ -38,6 +38,11 @@ public class Main
                 default:
                     throw new RuntimeException("The number of command line parameters is exceeded." +
                             " (1 - column number, 2 - CSV path)");
+            }
+
+            if(filePath == null)
+            {
+                filePath = "./airports.csv";
             }
 
             UserInterface ui = new ConsoleUI(filePath, filteredColumn);
